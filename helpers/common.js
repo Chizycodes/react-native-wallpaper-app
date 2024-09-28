@@ -14,7 +14,7 @@ export const getColumnCount = () => {
 	if (deviceWidth >= 1024) {
 		// desktop
 		return 4;
-	} else if (deviceHeight >= 768) {
+	} else if (deviceHeight >= 864) {
 		// tablet
 		return 3;
 	} else {

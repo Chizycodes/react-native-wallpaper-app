@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Pressable, TextInput, ScrollView } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { theme } from "../../constants/theme";
@@ -7,6 +7,9 @@ import { hp, wp } from "../../helpers/common";
 import Categories from "../../components/categories/Categories";
 import { apiCall } from "../../api";
 import ImageGrid from "../../components/images/ImageGrid";
+import { debounce } from "lodash";
+
+let page = 1;
 
 const HomeScreen = () => {
 	const { top } = useSafeAreaInsets();
@@ -35,6 +38,31 @@ const HomeScreen = () => {
 		setActiveCategory(cat);
 	};
 
+	const handleSearch = (text) => {
+		setSearch(text);
+		if (text.length > 2) {
+			// Search for text
+			page = 1;
+			setImages([]);
+			fetchImages({ page, q: text });
+		}
+
+		if (text == "") {
+			// Reset result
+			page = 1;
+			setImages([]);
+			fetchImages({ page });
+		}
+	};
+
+	const clearSearch = () => {
+		setSearch("");
+		searchInputRef.current.clear();
+		handleSearch("");
+	};
+
+	const handleTextDebouce = useCallback(debounce(handleSearch, 400), []);
+
 	return (
 		<View style={[styles.container, { paddingTop }]}>
 			<View style={styles.header}>
@@ -55,11 +83,11 @@ const HomeScreen = () => {
 						style={styles.searchInput}
 						placeholder="Search for photos..."
 						ref={searchInputRef}
-						value={search}
-						onChange={(value) => setSearch(value)}
+						// value={search}
+						onChangeText={handleTextDebouce}
 					/>
 					{search && (
-						<Pressable style={styles.closeIcon} onPress={() => setSearch("")}>
+						<Pressable style={styles.closeIcon} onPress={clearSearch}>
 							<Ionicons name="close" size={24} color={theme.colors.neutral(0.6)} />
 						</Pressable>
 					)}

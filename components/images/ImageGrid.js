@@ -11,7 +11,6 @@ const ImageGrid = ({ images }) => {
 			<MasonryFlashList
 				data={images}
 				numColumns={columns}
-				// initialNumToRender={1000}
 				contentContainerStyle={styles.listContainerStyle}
 				renderItem={({ item, index }) => <ImageCard item={item} columns={columns} index={index} />}
 				estimatedItemSize={200}
