@@ -36,29 +36,36 @@ const HomeScreen = () => {
 
 	const handleChangeCategory = (cat) => {
 		setActiveCategory(cat);
+		clearSearch();
+		setImages([]);
+		page = 1;
+		let params = { page };
+		if (cat) params.category = cat;
+		fetchImages(params, false);
 	};
 
 	const handleSearch = (text) => {
 		setSearch(text);
+		page = 1;
+		setImages([]);
+
+		setActiveCategory(null);
 		if (text.length > 2) {
 			// Search for text
-			page = 1;
-			setImages([]);
-			fetchImages({ page, q: text });
+			fetchImages({ page, q: text }, false);
 		}
 
 		if (text == "") {
 			// Reset result
-			page = 1;
-			setImages([]);
-			fetchImages({ page });
+			searchInputRef.current.clear();
+			fetchImages({ page }, false);
 		}
 	};
 
 	const clearSearch = () => {
 		setSearch("");
 		searchInputRef.current.clear();
-		handleSearch("");
+		// handleSearch("");
 	};
 
 	const handleTextDebouce = useCallback(debounce(handleSearch, 400), []);
@@ -87,7 +94,7 @@ const HomeScreen = () => {
 						onChangeText={handleTextDebouce}
 					/>
 					{search && (
-						<Pressable style={styles.closeIcon} onPress={clearSearch}>
+						<Pressable style={styles.closeIcon} onPress={() => handleSearch("")}>
 							<Ionicons name="close" size={24} color={theme.colors.neutral(0.6)} />
 						</Pressable>
 					)}
