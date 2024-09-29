@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Pressable, TextInput, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Pressable, TextInput, ScrollView, ActivityIndicator } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
@@ -46,12 +46,32 @@ const HomeScreen = () => {
 	};
 
 	const applyFilters = () => {
-		console.log("applyFilters");
+		if (filters) {
+			page = 1;
+			setImages([]);
+			let params = {
+				page,
+				...filters,
+			};
+			if (activeCategory) params.category = activeCategory;
+			if (search) params.q = search;
+			fetchImages(params, false);
+		}
 		closeFiltersModal();
 	};
 
 	const resetFilters = () => {
-		setFilters(null);
+		if (filters) {
+			page = 1;
+			setFilters(null);
+			setImages([]);
+			let params = {
+				page,
+			};
+			if (activeCategory) params.category = activeCategory;
+			if (search) params.q = search;
+			fetchImages(params, false);
+		}
 		closeFiltersModal();
 	};
 
@@ -60,7 +80,7 @@ const HomeScreen = () => {
 		clearSearch();
 		setImages([]);
 		page = 1;
-		let params = { page };
+		let params = { page, ...filters };
 		if (cat) params.category = cat;
 		fetchImages(params, false);
 	};
@@ -73,13 +93,13 @@ const HomeScreen = () => {
 		setActiveCategory(null);
 		if (text.length > 2) {
 			// Search for text
-			fetchImages({ page, q: text }, false);
+			fetchImages({ page, q: text, ...filters }, false);
 		}
 
 		if (text == "") {
 			// Reset result
 			searchInputRef.current.clear();
-			fetchImages({ page }, false);
+			fetchImages({ page, ...filters }, false);
 		}
 	};
 
@@ -126,6 +146,11 @@ const HomeScreen = () => {
 
 				{/* Images */}
 				<View>{images.length > 0 && <ImageGrid images={images} />}</View>
+
+				{/* loading */}
+				<View style={{ marginBottom: 70, marginTop: images.length > 0 ? 10 : 70 }}>
+					<ActivityIndicator size="large" />
+				</View>
 			</ScrollView>
 
 			{/* FIlters modal */}
