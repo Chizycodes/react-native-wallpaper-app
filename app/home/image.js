@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, Platform, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import { BlurView } from "expo-blur";
 import { wp } from "../../helpers/common";
@@ -9,13 +9,23 @@ import { theme } from "../../constants/theme";
 const image = () => {
 	const router = useRouter();
 	const item = useLocalSearchParams();
-	const [status, setStatus] = useState("");
+	const [status, setStatus] = useState("loading");
 	let url = item?.webformatURL;
 
 	const getSize = () => {
+		const aspectRatio = item?.imageWidth / item?.imageHeight;
+		const maxWidth = Platform.OS === "web" ? wp(50) : wp(92);
+		let calculatedHeight = maxWidth / aspectRatio;
+		let calculatedWidth = maxWidth;
+
+		if (aspectRatio < 1) {
+			// Portrait image
+			calculatedWidth = calculatedHeight * aspectRatio;
+		}
+
 		return {
-			width: 200,
-			height: 200,
+			width: calculatedWidth,
+			height: calculatedHeight,
 		};
 	};
 
@@ -25,7 +35,9 @@ const image = () => {
 
 	return (
 		<BlurView style={styles.container} tint="dark" intensity={60}>
-			<View style={[]}>
+			<View style={getSize()}>
+				<View style={styles.loading}>{status === "loading" && <ActivityIndicator size="large" color="white" />}</View>
+
 				<Image transition={100} style={[styles.image, getSize()]} source={url} onLoad={onLoad} />
 			</View>
 			<Button title="Back" onPress={() => router.back()} />
@@ -46,6 +58,13 @@ const styles = StyleSheet.create({
 		borderWidth: 2,
 		backgroundColor: "rgba(255,255,255,0.1)",
 		borderColor: "rgba(255,255,255,0.1)",
+	},
+	loading: {
+		position: "absolute",
+		width: "100%",
+		height: "100%",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 
