@@ -6,6 +6,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { theme } from "../../constants/theme";
 import { Entypo, Octicons } from "@expo/vector-icons";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 const image = () => {
 	const router = useRouter();
@@ -43,23 +44,23 @@ const image = () => {
 			</View>
 
 			<View style={styles.buttons}>
-				<View>
+				<Animated.View entering={FadeInDown.springify()}>
 					<Pressable style={styles.button} onPress={() => router.back()}>
 						<Octicons name="x" size={24} color="white" />
 					</Pressable>
-				</View>
+				</Animated.View>
 
-				<View>
+				<Animated.View entering={FadeInDown.springify().delay(100)}>
 					<Pressable style={styles.button}>
 						<Octicons name="download" size={24} color="white" />
 					</Pressable>
-				</View>
+				</Animated.View>
 
-				<View>
+				<Animated.View entering={FadeInDown.springify().delay(200)}>
 					<Pressable style={styles.button}>
 						<Entypo name="share" size={22} color="white" />
 					</Pressable>
-				</View>
+				</Animated.View>
 			</View>
 		</BlurView>
 	);
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "rgba(255,255,255,0.2)",
 		borderCurve: "continuous",
+		borderRadius: theme.radius.lg,
 	},
-  
 });
 
 export default image;
