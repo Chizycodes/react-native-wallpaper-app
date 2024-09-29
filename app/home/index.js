@@ -17,6 +17,7 @@ const HomeScreen = () => {
 	const paddingTop = top > 0 ? top + 10 : 30;
 	const [search, setSearch] = useState("");
 	const [images, setImages] = useState([]);
+	const [filters, setFilters] = useState(null);
 	const [activeCategory, setActiveCategory] = useState(null);
 	const searchInputRef = useRef(null);
 	const modalRef = useRef(null);
@@ -40,9 +41,19 @@ const HomeScreen = () => {
 		modalRef.current?.present();
 	};
 
-	const handleCloseFiltersModal = () => {
-    modalRef.current?.dismiss();
-  };
+	const closeFiltersModal = () => {
+		modalRef.current?.close();
+	};
+
+	const applyFilters = () => {
+		console.log("applyFilters");
+		closeFiltersModal();
+	};
+
+	const resetFilters = () => {
+		setFilters(null);
+		closeFiltersModal();
+	};
 
 	const handleChangeCategory = (cat) => {
 		setActiveCategory(cat);
@@ -118,7 +129,14 @@ const HomeScreen = () => {
 			</ScrollView>
 
 			{/* FIlters modal */}
-			<FiltersModal modalRef={modalRef} />
+			<FiltersModal
+				modalRef={modalRef}
+				filters={filters}
+				setFilters={setFilters}
+				onClose={closeFiltersModal}
+				onApply={applyFilters}
+				onReset={resetFilters}
+			/>
 		</View>
 	);
 };
