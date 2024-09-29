@@ -2,13 +2,10 @@ import { Text, StyleSheet, View, Pressable } from "react-native";
 import React, { useMemo } from "react";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
-import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { Extrapolation, FadeInDown, interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { capitalize, hp } from "../../helpers/common";
 import { theme } from "../../constants/theme";
 import CommonFiltersRow, { ColorsFiltersRow } from "./views/CommonFiltersRow";
-import OrientationView from "./views/OrientationView";
-import TypeView from "./views/TypeView";
-import ColorsView from "./views/ColorsView";
 import SectionView from "./views/SectionView";
 import { data } from "../../constants/data";
 import { ScrollView } from "react-native-gesture-handler";
@@ -34,17 +31,22 @@ const FiltersModal = ({ modalRef, onClose, onApply, onReset, filters, setFilters
 							let sectionData = data.filters[sectionName];
 							let title = capitalize(sectionName);
 							return (
-								<View key={sectionName}>
+								<Animated.View
+									key={sectionName}
+									entering={FadeInDown.delay(index * 100 + 100)
+										.springify()
+										.damping(11)}
+								>
 									<SectionView
 										title={title}
 										content={sectionView({ data: sectionData, filters, setFilters, filterName: sectionName })}
 									/>
-								</View>
+								</Animated.View>
 							);
 						})}
 
 						{/* actions */}
-						<View style={styles.buttons}>
+						<Animated.View style={styles.buttons} entering={FadeInDown.delay(500).springify().damping(11)}>
 							<Pressable style={styles.resetButton} onPress={onReset}>
 								<Text style={[styles.buttonText, { color: theme.colors.neutral(0.9) }]}>Reset</Text>
 							</Pressable>
@@ -52,7 +54,7 @@ const FiltersModal = ({ modalRef, onClose, onApply, onReset, filters, setFilters
 							<Pressable style={styles.applyButton} onPress={onApply}>
 								<Text style={[styles.buttonText, { color: theme.colors.white }]}>Apply</Text>
 							</Pressable>
-						</View>
+						</Animated.View>
 					</View>
 				</ScrollView>
 			</BottomSheetView>
