@@ -14,7 +14,6 @@ const formatUrl = (params) => {
 		let value = key == "q" ? encodeURIComponent(params[key]) : params[key];
 		url += `&${key}=${value}`;
 	});
-	console.log("final url: ", url);
 	return url;
 };
 
