@@ -9,6 +9,7 @@ import { Entypo, Octicons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import Toast from "react-native-toast-message";
 
 const image = () => {
 	const router = useRouter();
@@ -44,7 +45,7 @@ const image = () => {
 		setStatus("downloading");
 		let uri = await downloadFile();
 		if (uri) {
-			console.log("Downloaded");
+			showToast("Image downloaded");
 		}
 	};
 
@@ -66,6 +67,24 @@ const image = () => {
 			Alert.alert("Image", error.message);
 			return null;
 		}
+	};
+
+	const showToast = (message) => {
+		Toast.show({
+			type: "success",
+			text1: message,
+			position: "bottom",
+		});
+	};
+
+	const toastConfig = {
+		success: ({ text1, props, ...rest }) => {
+			return (
+				<View style={styles.toast}>
+					<Text style={styles.toastText}>{text1}</Text>
+				</View>
+			);
+		},
 	};
 
 	return (
@@ -107,6 +126,7 @@ const image = () => {
 					)}
 				</Animated.View>
 			</View>
+			<Toast config={toastConfig} visibilityTime={2500} />
 		</BlurView>
 	);
 };
@@ -146,6 +166,19 @@ const styles = StyleSheet.create({
 		backgroundColor: "rgba(255,255,255,0.2)",
 		borderCurve: "continuous",
 		borderRadius: theme.radius.lg,
+	},
+	toast: {
+		padding: 15,
+		paddingHorizontal: 30,
+		borderRadius: theme.radius.xl,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(255,255,255,0.15)",
+	},
+	toastText: {
+		fontSize: hp(1.8),
+		fontWeight: theme.fontWeight.semibold,
+		color: theme.colors.white,
 	},
 });
 
