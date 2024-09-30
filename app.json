@@ -45,7 +45,8 @@
     "updates": {
       "requestHeaders": {
         "expo-channel-name": "main"
-      }
+      },
+      "url": "https://u.expo.dev/dccb92dd-64b2-4425-a786-a3fa70fd7885"
     },
     "owner": "chizycodes",
     "runtimeVersion": "1.0.0"
